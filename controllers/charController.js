@@ -1,4 +1,5 @@
 //const db = require("../db/queries");
+const CustomError = require("../errors/CustomError")
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
@@ -7,11 +8,10 @@ const getAllChars = asyncHandler(async (req, res) => {
     const chars = await db.getAllChars();
 
     if (!chars) {
-        res.status(500).send("Internal server error");
-        return;
+        throw new CustomError(500, "Internal server error");
     }
 
-    res.render("charList", {
+    res.render("characters", {
         title: "Character list",
         chars: chars,
     });
@@ -35,19 +35,19 @@ const validateChar = [
     .isLength({ min: 1, max: 20 }).withMessage(`Name ${lengthErr}`),
 
   body("birth")
-    .optional()
+    .optional({values: "falsy"})
     .trim()
-    .isString()
+    .escape()
     .isLength({ min: 1, max: 20 }).withMessage(`Birthdate ${lengthErr}`),
 
   body("death")
-    .optional()
+    .optional({values: "falsy"})
     .trim()
-    .isString()
+    .escape()
     .isLength({ min: 1, max: 20 }).withMessage(`Date of death ${lengthErr}`),
 
   body("realm")
-    .optional()
+    .optional({values: "falsy"})
     .trim()
     .isAlpha().withMessage(`Realm ${alphaErr}`)
     .isLength({ min: 1, max: 20 }).withMessage(`Realm ${lengthErr}`),
@@ -66,12 +66,11 @@ const postAddChar = [
       });
     }
 
-    const { name, race, birth, gender, death, realm } = req.body;
-    const added = await db.addUser({ name, race, birth, gender, death, realm });
+    const { name, race, birth, death, gender, realm } = req.body;
+    const added = await db.addUser({ name, race, birth, death, gender,realm });
 
     if (!added) {
-        res.status(500).send("Internal server error");
-        return;
+      throw new CustomError(500, "Internal server error");
     }
 
     res.redirect("/characters");
@@ -84,8 +83,7 @@ const getCharUpdate = (req, res) => {
     const char = db.getChar(req.params.id);
 
     if (!char) {
-        res.status(404).send("Character nor found");
-        return;
+        throw new CustomError(404, "Character not found");
     }
 
     res.render("updateChar", {
@@ -98,7 +96,7 @@ const getCharUpdate = (req, res) => {
 const postCharUpdate = [
     validateChar,
     async (req, res) => {
-      const char = db.getUser(req.params.id);
+
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -110,15 +108,14 @@ const postCharUpdate = [
       }
       
 
-    const { name, race, birth, gender, death, realm } = req.body;
-    const updated = await db.updateUser({ name, race, birth, gender, death, realm });
+      const { name, race, birth, death, gender, realm } = req.body;
+      const updated = await db.updateUser({ name, race, birth, death, gender, realm });
 
-    if (!updated) {
-        res.status(500).send("Internal server error");
-        return;
-    }
+      if (!updated) {
+        throw new CustomError(500, "Internal server error");
+      }
 
-    res.redirect("/characters");
+      res.redirect("/characters");
     }
 ];
 
@@ -128,9 +125,17 @@ const postCharDelete = async (req, res) => {
     const deleted = await db.deleteChar(req.params.id);
 
     if (!deleted) {
-        res.status(500).send("Internal server error");
-        return;
+      throw new CustomError(500, "Internal server error");
     }
 
     res.redirect("/characters");
-  };
+};
+
+
+module.exports = { getAllChars, 
+                   getAddChar, 
+                   postAddChar, 
+                   getCharUpdate, 
+                   postCharUpdate, 
+                   postCharDelete
+                  }
