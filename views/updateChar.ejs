@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("partials/errors.ejs") %>
+
+  <form action="/<%= char.id %>/update" method="POST">
+    <label for="name">Name: </label>
+    <input type="text" name="name" id="name" value="<%= char.name %>" required>
+
+    <label for="race">Race: </label>
+    <select id="race" name="race" required>
+      <% races.forEach(race => { %>
+          <option 
+            <%- if (race.name === char.race) return 'selected' %>
+            value="<%= race.name %>"
+          >
+            <%= race.name %>
+          </option>
+      <% });%>
+    </select>
+
+    <label for="birth"></label>
+    <input type="text" name="birth" id="birth" max="20" value="<%= char.birth %>">
+
+    <label for="death"></label>
+    <input type="text" name="death" id="death" max="20" value="<%= char.death %>">
+
+    <label for="gender">Race: </label>
+    <select id="gender" name="gender">
+        <option 
+          value="Male"
+          <%- if (char.gender === "Male") return 'selected' %>
+        >
+          Male
+        </option>
+        <option 
+          value="Female"
+          <%- if (char.gender === "Female") return 'selected' %>
+        >
+          Female
+        </option>
+    </select>
+
+    <label for="realm">Realm: </label>
+    <input type="text" name="realm" id="realm" max="20" value="<%= char.realm %>">
+
+    <button type="submit">Submit</button>
+  </form>
+  <a href="/">Back to home</a>
+</body>
+</html>
