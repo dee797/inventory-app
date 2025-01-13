@@ -6,11 +6,11 @@ const charRouter = Router();
 charRouter.get("/", charController.getAllChars);
 
 charRouter.get("/add", charController.getAddChar);
-charRouter.post("/add", charController.postAddChar);
+charRouter.post("/add", (req, res) => charController.postAddChar);
 
-charRouter.get("/:id", charController.getChar);
+charRouter.get("/:id", charController.getAddChar);
 charRouter.get("/:id/update", charController.getCharUpdate);
-charRouter.post("/:id/update", charController.postCharUpdate);
+charRouter.post("/:id/update", (req, res) => charController.postCharUpdate);
 
 charRouter.post("/:id/delete", charController.postCharDelete);
 
