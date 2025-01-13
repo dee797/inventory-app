@@ -3,7 +3,7 @@ const { Client } = require("pg");
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS race (
-  name PRIMARY KEY
+  name VARCHAR ( 50 ) PRIMARY KEY
 );
 
 INSERT INTO race (name) 
@@ -12,15 +12,32 @@ VALUES
   ('Man'),
   ('Hobbit');
 
+CREATE TABLE IF NOT EXISTS realm (
+  name VARCHAR ( 50 ) PRIMARY KEY
+);
+
+INSERT INTO realm (name)
+VALUES 
+ ('Rivendell'),
+ ('The Shire'),
+ ('Gondor');
+
+
 CREATE TABLE IF NOT EXISTS character (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR ( 20 )
-  race REFERENCES race (name)
-  birth VARCHAR ( 20 )
-  death VARCHAR ( 20 )
-  gender VARCHAR ( 20 )
-  realm VARCHAR ( 20 )
-)
+  name VARCHAR ( 50 ),
+  race VARCHAR ( 50 ) REFERENCES race (name),
+  birth VARCHAR ( 50 ),
+  death VARCHAR ( 50 ),
+  gender VARCHAR ( 10 ),
+  realm VARCHAR ( 50 ) REFERENCES realm (name)
+);
+
+INSERT INTO character (name, race, birth, death, gender, realm)
+VALUES
+  ('Bilbo Baggins', 'Hobbit', 'September 22, TA 2890', 'Unknown', 'Male', 'The Shire'),
+  ('Elrond', 'Elf', 'FA 532', 'Still alive', 'Male', 'Rivendell'),
+  ('Aragorn', 'Man', 'March 1, 2931', 'FO 120', 'Male', 'Gondor');
 `;
 
 async function main() {
