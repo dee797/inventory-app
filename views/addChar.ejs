@@ -15,7 +15,6 @@
     <select id="race" name="race" required>
       <% races.forEach(race => { %>
         <option 
-          <%- if (race.name === char.race) return 'selected' %>
           value="<%= race.name %>"
         >
           <%= race.name %>
