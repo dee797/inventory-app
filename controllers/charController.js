@@ -1,4 +1,4 @@
-const db = require("../db/queries");
+const db = require("../db/charQueries");
 const CustomError = require("../errors/CustomError")
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
@@ -26,30 +26,30 @@ const getAddChar = (req, res) => {
 
 
 const alphaErr = "must only contain letters.";
-const lengthErr = "must be between 1 and 20 characters.";
+const lengthErr = "must be between 1 and 50 characters.";
 
 const validateChar = [
   body("name").trim()
     .isAlpha().withMessage(`Name ${alphaErr}`)
-    .isLength({ min: 1, max: 20 }).withMessage(`Name ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Name ${lengthErr}`),
 
   body("birth")
     .optional({values: "falsy"})
     .trim()
     .escape()
-    .isLength({ min: 1, max: 20 }).withMessage(`Birthdate ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Birthdate ${lengthErr}`),
 
   body("death")
     .optional({values: "falsy"})
     .trim()
     .escape()
-    .isLength({ min: 1, max: 20 }).withMessage(`Date of death ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Date of death ${lengthErr}`),
 
   body("realm")
     .optional({values: "falsy"})
     .trim()
     .isAlpha().withMessage(`Realm ${alphaErr}`)
-    .isLength({ min: 1, max: 20 }).withMessage(`Realm ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Realm ${lengthErr}`),
     ,
 ];
 
@@ -68,7 +68,7 @@ const postAddChar = [
     const { name, race, birth, death, gender, realm } = req.body;
 
     try {
-      await db.addUser({ name, race, birth, death, gender, realm });
+      await db.addChar({ name, race, birth, death, gender, realm });
       res.redirect("/characters");
     } catch {
       throw new CustomError(500, "Internal server error");
@@ -111,7 +111,7 @@ const postCharUpdate = [
       const { name, race, birth, death, gender, realm } = req.body;
 
       try {
-        await db.updateUser(req.params.id, { name, race, birth, death, gender, realm });
+        await db.updateChar(req.params.id, { name, race, birth, death, gender, realm });
         res.redirect("/characters");
       } catch {
         throw new CustomError(500, "Internal server error");
