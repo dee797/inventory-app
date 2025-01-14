@@ -6,8 +6,8 @@ async function getAllChars() {
 }
 
 async function getChar(id) {
-  const { char } = await pool.query("SELECT * FROM character WHERE character.id = $1", [id]);
-  return char;
+  const { rows } = await pool.query("SELECT * FROM character WHERE character.id = $1", [id]);
+  return rows[0];
 }
 
 async function addChar({name, race, birth, death, gender, realm}) {
