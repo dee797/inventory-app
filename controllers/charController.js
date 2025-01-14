@@ -20,7 +20,7 @@ const getAllChars = asyncHandler(async (req, res) => {
 const getAddChar = (req, res) => {
   res.render("addChar", {
     title: "Add Character",
-    races: res.app.locals.races || ["Elf", "Man", "Hobbit"],
+    races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
   });
 };
 
@@ -81,11 +81,11 @@ const postAddChar = [
 const getCharUpdate = async (req, res) => {
     
   try {
-    const char = await db.getChar(req.params.id);
+    const char = await db.getChar(parseInt(req.params.id));
     res.render("updateChar", {
       title: "Update Character",
       char: char,
-      races: res.app.locals.races || ["Elf", "Man", "Hobbit"],
+      races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
     });
   } catch {
     throw new CustomError(404, "Character not found");
@@ -111,7 +111,7 @@ const postCharUpdate = [
       const { name, race, birth, death, gender, realm } = req.body;
 
       try {
-        await db.updateChar(req.params.id, { name, race, birth, death, gender, realm });
+        await db.updateChar(parseInt(req.params.id), { name, race, birth, death, gender, realm });
         res.redirect("/characters");
       } catch {
         throw new CustomError(500, "Internal server error");
@@ -123,7 +123,7 @@ const postCharUpdate = [
 
 const postCharDelete = async (req, res) => {
     try {
-      await db.deleteChar(req.params.id);
+      await db.deleteChar(parseInt(req.params.id));
       res.redirect("/characters");
     } catch {
       throw new CustomError(500, "Internal server error");
