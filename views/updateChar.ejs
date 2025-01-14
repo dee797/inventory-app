@@ -7,39 +7,46 @@
   <h1><%= title %></h1>
   <%- include("partials/errors.ejs") %>
 
-  <form action="/<%= char.id %>/update" method="POST">
+  <form action="characters/<%= char.id %>/update" method="POST">
     <label for="name">Name: </label>
     <input type="text" name="name" id="name" value="<%= char.name %>" required>
 
     <label for="race">Race: </label>
     <select id="race" name="race" required>
+
       <% races.forEach(race => { %>
+        <% let selected = ""; %>
+        <% if (race.name === char.race) { selected = "selected"; }%>
           <option 
-            <%- if (race.name === char.race) return 'selected' %>
             value="<%= race.name %>"
+            <%- selected %>
           >
             <%= race.name %>
           </option>
-      <% });%>
+      <% }); %>
     </select>
 
-    <label for="birth"></label>
+    <label for="birth">Birth:</label>
     <input type="text" name="birth" id="birth" max="20" value="<%= char.birth %>">
 
-    <label for="death"></label>
+    <label for="death">Death:</label>
     <input type="text" name="death" id="death" max="20" value="<%= char.death %>">
 
     <label for="gender">Race: </label>
     <select id="gender" name="gender">
+      <% let selectMale = ""; let selectFemale =""; %>
+      <% if (char.gender === "Male") { %>
+        <% selectMale = "selected"; %>
+        <% } else { selectFemale = "selected"; } %>
         <option 
           value="Male"
-          <%- if (char.gender === "Male") return 'selected' %>
+          <%- selectMale %>
         >
           Male
         </option>
         <option 
           value="Female"
-          <%- if (char.gender === "Female") return 'selected' %>
+          <%- selectFemale %>
         >
           Female
         </option>
