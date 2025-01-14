@@ -3,9 +3,23 @@ const express = require("express");
 const app = express();
 const raceRouter = require("./routes/raceRouter");
 const charRouter = require("./routes/charRouter");
+const db = require("./db/raceQueries");
+const asyncHandler = require("express-async-handler");
+const CustomError = require("./errors/CustomError");
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+
+
+const getRaces = asyncHandler(async() => {
+    try {
+        const rows = await db.getAllRaces();
+        app.locals.races = rows;
+    } catch {
+        throw new CustomError(500, "Internal server error");
+    }
+});
+getRaces();
 
 
 app.use("/characters", charRouter);
