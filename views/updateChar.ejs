@@ -7,7 +7,7 @@
   <h1><%= title %></h1>
   <%- include("partials/errors.ejs") %>
 
-  <form action="characters/<%= char.id %>/update" method="POST">
+  <form action="/characters/<%= char.id %>/update" method="POST">
     <label for="name">Name: </label>
     <input type="text" name="name" id="name" value="<%= char.name %>" required>
 
@@ -27,12 +27,12 @@
     </select>
 
     <label for="birth">Birth:</label>
-    <input type="text" name="birth" id="birth" max="20" value="<%= char.birth %>">
+    <input type="text" name="birth" id="birth" max="50" value="<%= char.birth %>">
 
     <label for="death">Death:</label>
-    <input type="text" name="death" id="death" max="20" value="<%= char.death %>">
+    <input type="text" name="death" id="death" max="50" value="<%= char.death %>">
 
-    <label for="gender">Race: </label>
+    <label for="gender">Gender: </label>
     <select id="gender" name="gender">
       <% let selectMale = ""; let selectFemale =""; %>
       <% if (char.gender === "Male") { %>
@@ -53,7 +53,18 @@
     </select>
 
     <label for="realm">Realm: </label>
-    <input type="text" name="realm" id="realm" max="20" value="<%= char.realm %>">
+    <select name="realm" id="realm" required>
+      <% realms.forEach(realm => { %>
+        <% let selected = ""; %>
+        <% if (realm.name === char.realm) { selected = "selected"; }%>
+          <option 
+            value="<%= realm.name %>"
+            <%- selected %>
+          >
+            <%= realm.name %>
+          </option>
+      <% }); %>
+    </select>
 
     <button type="submit">Submit</button>
   </form>
