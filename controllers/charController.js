@@ -21,114 +21,111 @@ const getAddChar = (req, res) => {
   res.render("addChar", {
     title: "Add Character",
     races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
+    realms: req.app.locals.realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
   });
 };
 
 
-const alphaErr = "must only contain letters.";
 const lengthErr = "must be between 1 and 50 characters.";
 
 const validateChar = [
   body("name").trim()
-    .isAlpha().withMessage(`Name ${alphaErr}`)
-    .isLength({ min: 1, max: 50 }).withMessage(`Name ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Name ${lengthErr}`)
+    .escape(),
 
   body("birth")
     .optional({values: "falsy"})
     .trim()
-    .escape()
-    .isLength({ min: 1, max: 50 }).withMessage(`Birthdate ${lengthErr}`),
+    .isLength({ min: 1, max: 50 }).withMessage(`Birthdate ${lengthErr}`)
+    .escape(),
 
   body("death")
     .optional({values: "falsy"})
     .trim()
+    .isLength({ min: 1, max: 50 }).withMessage(`Date of death ${lengthErr}`)
     .escape()
-    .isLength({ min: 1, max: 50 }).withMessage(`Date of death ${lengthErr}`),
-
-  body("realm")
-    .optional({values: "falsy"})
-    .trim()
-    .isAlpha().withMessage(`Realm ${alphaErr}`)
-    .isLength({ min: 1, max: 50 }).withMessage(`Realm ${lengthErr}`),
-    ,
 ];
+
 
 const postAddChar = [
   validateChar,
-  async (req, res) => {
+  (req, res, next) => {
     const errors = validationResult(req);
-
+  
     if (!errors.isEmpty()) {
       return res.status(400).render("addChar", {
         title: "Add Character",
         errors: errors.array(),
       });
     }
-
+    next();
+  },
+  asyncHandler(async (req, res) => {
     const { name, race, birth, death, gender, realm } = req.body;
-
+  
     try {
       await db.addChar({ name, race, birth, death, gender, realm });
       res.redirect("/characters");
     } catch {
       throw new CustomError(500, "Internal server error");
     }
-  }
+  })
 ];
 
 
 
-const getCharUpdate = async (req, res) => {
+const getCharUpdate = asyncHandler(async (req, res) => {
     
   try {
     const char = await db.getChar(parseInt(req.params.id));
+    res.char = char;
     res.render("updateChar", {
       title: "Update Character",
       char: char,
       races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
+      realms: req.app.locals.realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
     });
   } catch {
     throw new CustomError(404, "Character not found");
   }    
-};
+});
   
 
 const postCharUpdate = [
-    validateChar,
-    async (req, res) => {
-
+  validateChar,
+  (req, res, next) => {
       const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        return res.status(400).render("updateChar", {
-          title: "Update Character",
-          char: char,
-          errors: errors.array(),
-        });
-      }
-      
-
-      const { name, race, birth, death, gender, realm } = req.body;
-
-      try {
-        await db.updateChar(parseInt(req.params.id), { name, race, birth, death, gender, realm });
-        res.redirect("/characters");
-      } catch {
-        throw new CustomError(500, "Internal server error");
-      }
+    if (!errors.isEmpty()) {
+      return res.status(400).render("updateChar", {
+        title: "Update Character",
+        char: res.char,
+        errors: errors.array(),
+      });
     }
+    next();
+  },
+  asyncHandler(async (req, res) => {
+    const { name, race, birth, death, gender, realm } = req.body;
+  
+    try {
+      await db.updateChar(parseInt(req.params.id), { name, race, birth, death, gender, realm });
+      res.redirect("/characters");
+    } catch {
+      throw new CustomError(500, "Internal server error");
+    }
+  })
 ];
 
 
-
-const postCharDelete = async (req, res) => {
+const postCharDelete = asyncHandler(async (req, res) => {
     try {
       await db.deleteChar(parseInt(req.params.id));
       res.redirect("/characters");
     } catch {
       throw new CustomError(500, "Internal server error");
     }
-};
+});
 
 
 module.exports = { getAllChars, 
