@@ -3,7 +3,8 @@ const express = require("express");
 const app = express();
 const raceRouter = require("./routes/raceRouter");
 const charRouter = require("./routes/charRouter");
-const db = require("./db/raceQueries");
+const racedb = require("./db/raceQueries");
+const realmdb = require("./db/realmQueries");
 const asyncHandler = require("express-async-handler");
 const CustomError = require("./errors/CustomError");
 
@@ -13,13 +14,24 @@ app.use(express.urlencoded({ extended: true }));
 
 const getRaces = asyncHandler(async() => {
     try {
-        const rows = await db.getAllRaces();
+        const rows = await racedb.getAllRaces();
         app.locals.races = rows;
     } catch {
         throw new CustomError(500, "Internal server error");
     }
 });
 getRaces();
+
+const getRealms = asyncHandler(async() => {
+    try {
+        const rows = await realmdb.getAllRealms();
+        app.locals.realms = rows;
+    } catch {
+        throw new CustomError(500, "Internal server error");
+    }
+});
+getRealms();
+
 
 
 app.use("/characters", charRouter);
