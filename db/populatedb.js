@@ -3,7 +3,7 @@ const { Client } = require("pg");
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS race (
-  name VARCHAR ( 50 ) PRIMARY KEY
+  name VARCHAR ( 75 ) PRIMARY KEY
 );
 
 INSERT INTO race (name) 
@@ -13,7 +13,7 @@ VALUES
   ('Hobbit');
 
 CREATE TABLE IF NOT EXISTS realm (
-  name VARCHAR ( 50 ) PRIMARY KEY
+  name VARCHAR ( 75 ) PRIMARY KEY
 );
 
 INSERT INTO realm (name)
@@ -25,12 +25,12 @@ VALUES
 
 CREATE TABLE IF NOT EXISTS character (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR ( 50 ),
-  race VARCHAR ( 50 ) REFERENCES race (name),
-  birth VARCHAR ( 50 ),
-  death VARCHAR ( 50 ),
+  name VARCHAR ( 75 ),
+  race VARCHAR ( 75 ) REFERENCES race (name),
+  birth VARCHAR ( 75 ),
+  death VARCHAR ( 75 ),
   gender VARCHAR ( 10 ),
-  realm VARCHAR ( 50 ) REFERENCES realm (name)
+  realm VARCHAR ( 75 ) REFERENCES realm (name)
 );
 
 INSERT INTO character (name, race, birth, death, gender, realm)
