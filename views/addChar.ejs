@@ -7,7 +7,7 @@
   <h1><%= title %></h1>
   <%- include("partials/errors.ejs") %>
 
-  <form action="/add" method="POST">
+  <form action="/characters/add" method="POST">
     <label for="name">Name: </label>
     <input type="text" name="name" id="name" required>
 
@@ -22,11 +22,11 @@
       <% });%>
     </select>
 
-    <label for="birth"></label>
-    <input type="text" name="birth" id="birth" max="20">
+    <label for="birth">Birth: </label>
+    <input type="text" name="birth" id="birth" max="50">
 
-    <label for="death"></label>
-    <input type="text" name="death" id="death" max="20">
+    <label for="death">Death: </label>
+    <input type="text" name="death" id="death" max="50">
 
     <label for="gender">Race: </label>
     <select id="gender" name="gender">
@@ -35,7 +35,15 @@
     </select>
 
     <label for="realm">Realm: </label>
-    <input type="text" name="realm" id="realm" max="20">
+    <select name="realm" id="realm" required>
+      <% realms.forEach(realm => { %>
+        <option 
+          value="<%= realm.name %>"
+        >
+          <%= realm.name %>
+        </option>
+      <% });%>
+    </select>
 
     <button type="submit">Submit</button>
   </form>
