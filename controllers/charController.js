@@ -1,4 +1,6 @@
 const db = require("../db/charQueries");
+const racedb = require("../db/raceQueries");
+const realmdb = require("../db/realmQueries");
 const CustomError = require("../errors/CustomError")
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
@@ -13,13 +15,16 @@ const getAllChars = asyncHandler(async (req, res) => {
 });
 
 
-const getAddChar = (req, res) => {
+const getAddChar = asyncHandler(async (req, res) => {
+  const races = await racedb.getAllRaces();
+  const realms = await realmdb.getAllRealms();
+
   res.render("charViews/addChar", {
     title: "Add Character",
-    races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
-    realms: req.app.locals.realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
+    races: races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
+    realms: realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
   });
-};
+});
 
 
 const lengthErr = "must be between 1 and 50 characters.";
@@ -65,6 +70,8 @@ const postAddChar = [
 
 const getCharUpdate = asyncHandler(async (req, res) => {    
     const char = await db.getChar(parseInt(req.params.id));
+    const races = await racedb.getAllRaces();
+    const realms = await realmdb.getAllRealms();
 
     if (!char) {
       throw new CustomError(404, "Character not found");
@@ -74,8 +81,8 @@ const getCharUpdate = asyncHandler(async (req, res) => {
     res.render("charViews/updateChar", {
       title: "Update Character",
       char: char,
-      races: req.app.locals.races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
-      realms: req.app.locals.realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
+      races: races || [{name: "Elf"}, {name: "Man"}, {name: "Hobbit"}],
+      realms: realms || [{name: "Rivendell"}, {name: "The Shire"}, {name: "Gondor"}]
     });   
 });
   
