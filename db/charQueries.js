@@ -1,7 +1,7 @@
 const pool = require("./pool");
 
 async function getAllChars() {
-  const { rows } = await pool.query("SELECT * FROM character");
+  const { rows } = await pool.query("SELECT * FROM character ORDER BY id");
   return rows;
 }
 
