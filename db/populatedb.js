@@ -26,11 +26,11 @@ VALUES
 CREATE TABLE IF NOT EXISTS character (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   name VARCHAR ( 75 ),
-  race VARCHAR ( 75 ) REFERENCES race (name),
+  race VARCHAR ( 75 ) REFERENCES race (name) ON UPDATE CASCADE,
   birth VARCHAR ( 75 ),
   death VARCHAR ( 75 ),
   gender VARCHAR ( 10 ),
-  realm VARCHAR ( 75 ) REFERENCES realm (name)
+  realm VARCHAR ( 75 ) REFERENCES realm (name) ON UPDATE CASCADE
 );
 
 INSERT INTO character (name, race, birth, death, gender, realm)
