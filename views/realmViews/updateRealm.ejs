@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("../partials/errors.ejs") %>
+
+  <form action="/realms/<%= realm.name %>/update" method="POST">
+    <label for="name">Name: </label>
+    <input type="text" name="name" id="name" value="<%= realm.name %>" required>
+
+    <button type="submit" onclick="return confirm('Updating a realm will also update character data. Are you sure you want to continue?')">Submit</button>
+  </form>
+  <a href="/">Back to home</a>
+</body>
+</html>
