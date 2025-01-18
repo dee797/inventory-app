@@ -6,10 +6,11 @@ const raceRouter = require("./routes/raceRouter");
 const charRouter = require("./routes/charRouter");
 const realmRouter = require("./routes/realmRouter");
 
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static(path.join(__dirname,'public')));
 
 app.use("/characters", charRouter);
 app.use("/races", raceRouter);
