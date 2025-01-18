@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node db/populatedb",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "style": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css" 
+    "style": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
+    "postcss-import": "^16.1.0",
     "tailwindcss": "^3.4.17"
   }
 }
