@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node db/populatedb",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "style": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css" 
   },
   "keywords": [],
   "author": "",
@@ -17,5 +18,10 @@
     "express-async-handler": "^1.2.0",
     "express-validator": "^7.2.1",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17"
   }
 }
