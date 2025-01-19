@@ -6,6 +6,8 @@ const asyncHandler = require("express-async-handler");
 
 const getAllRealms = asyncHandler(async (req, res) => {
     const realms = await db.getAllRealms();
+    res.app.locals.realms = realms;
+
     res.render("realmViews/realms", {
       title: "List of Realms",
       realms: realms
@@ -43,7 +45,15 @@ const postAddRealm = [
   },
   asyncHandler(async (req, res) => {
     const { name } = req.body;
-  
+    const existingRealm = await db.getRealm(name);
+
+    if (existingRealm && existingRealm.name === name) {
+      return res.status(400).render("realmViews/addRealm", {
+        title: "Add Realm",
+        errors: [{ msg: "Error: A realm with that name already exists." }]
+      });
+    }
+
     await db.addRealm(name);
     res.redirect("/realms");
   })
@@ -58,7 +68,7 @@ const getUpdateRealm = asyncHandler(async (req, res) => {
       throw new CustomError(404, "Realm not found");
     }
 
-    res.realm = realm;
+    res.app.locals.realm = realm;
     res.render("realmViews/updateRealm", {
       title: "Update Realm",
       realm: realm
@@ -74,7 +84,7 @@ const postUpdateRealm = [
     if (!errors.isEmpty()) {
       return res.status(400).render("realmViews/updateRealm", {
         title: "Update Realm",
-        realm: res.realm,
+        realm: res.app.locals.realm,
         errors: errors.array(),
       });
     }
@@ -82,6 +92,15 @@ const postUpdateRealm = [
   },
   asyncHandler(async (req, res) => {
     const { name } = req.body;
+    const existingRealm = await db.getRealm(name);
+
+    if (existingRealm && existingRealm.name === name) {
+      return res.status(400).render("realmViews/updateRealm", {
+        title: "Update Realm",
+        realm: res.app.locals.realm,
+        errors: [{ msg: "Error: A realm with that name already exists." }]
+      });
+    }
  
     await db.updateRealm(req.params.id, name);
     res.redirect("/realms");
@@ -93,7 +112,11 @@ const postDeleteRealm = asyncHandler(async (req, res) => {
     const chars = await db.getCharsOfRealm(req.params.id);
 
     if (chars.length > 0) {
-      throw new CustomError(404, "Error: cannot delete a realm if there is at least one character from that realm");
+      return res.status(400).render("realmViews/realms", {
+        title: "List of Realms",
+        realms: res.app.locals.realms,
+        error: "Error: cannot delete a realm if there is at least one character from that realm"
+      });
     }
 
     await db.deleteRealm(req.params.id);
