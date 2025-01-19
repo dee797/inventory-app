@@ -6,6 +6,8 @@ const asyncHandler = require("express-async-handler");
 
 const getAllRaces = asyncHandler(async (req, res) => {
     const races = await db.getAllRaces();
+    res.app.locals.races = races;
+
     res.render("raceViews/races", {
       title: "List of Races",
       races: races,
@@ -43,6 +45,14 @@ const postAddRace = [
   },
   asyncHandler(async (req, res) => {
     const { name } = req.body;
+    const existingRace= await db.getRace(name);
+
+    if (existingRace && existingRace.name === name) {
+      return res.status(400).render("raceViews/addRace", {
+        title: "Add Race",
+        errors: [{ msg: "Error: A race with that name already exists." }]
+      });
+    }
   
     await db.addRace(name);
     res.redirect("/races");
@@ -58,7 +68,7 @@ const getUpdateRace = asyncHandler(async (req, res) => {
       throw new CustomError(404, "Race not found");
     }
 
-    res.race = race;
+    res.app.locals.race = race;
     res.render("raceViews/updateRace", {
       title: "Update Race",
       race: race
@@ -74,7 +84,7 @@ const postUpdateRace = [
     if (!errors.isEmpty()) {
       return res.status(400).render("raceViews/updateRace", {
         title: "Update Race",
-        race: res.race,
+        race: res.app.locals.race,
         errors: errors.array(),
       });
     }
@@ -82,6 +92,15 @@ const postUpdateRace = [
   },
   asyncHandler(async (req, res) => {
     const { name } = req.body;
+    const existingRace = await db.getRace(name);
+
+    if (existingRace && existingRace.name === name) {
+      return res.status(400).render("raceViews/updateRace", {
+        title: "Update Race",
+        race: res.app.locals.race,
+        errors: [{ msg: "Error: A race with that name already exists." }]
+      });
+    }
  
     await db.updateRace(req.params.id, name);
     res.redirect("/races");
@@ -93,7 +112,11 @@ const postDeleteRace = asyncHandler(async (req, res) => {
     const chars = await db.getCharsOfRace(req.params.id);
 
     if (chars.length > 0) {
-      throw new CustomError(404, "Error: cannot delete a race if there is at least one character that has that race")
+      return res.status(400).render("raceViews/races", {
+        title: "List of Races",
+        realms: res.app.locals.races,
+        error: "Error: cannot delete a race if there is at least one character that has that race"
+      });    
     }
 
     await db.deleteRace(req.params.id);
