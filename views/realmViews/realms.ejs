@@ -49,5 +49,13 @@
   </div>
   
   <div class="flex justify-center w-full"><a href="/realms/add"><button class="text-2xl p-5 bg-gray-200 hover:bg-gray-300 rounded-lg">Create a new realm</button></a></div>
+  <script type="text/javascript">
+    function showInfo() {
+      <% if (locals.error) { %>
+        alert("<%= locals.error %>");
+      <% } %>
+    }
+    showInfo();
+  </script>
 </body>
 </html>
