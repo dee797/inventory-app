@@ -11,3 +11,5 @@ This project was created according to The Odin Project's "Inventory App" assignm
 - EJS
 
 Visit the site at https://inventory-app-d4bm.onrender.com/
+
+** Note: It may take a few seconds to connect to the site as the app goes to sleep after 15 minutes of inactivity.
